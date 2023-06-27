@@ -51,7 +51,7 @@ class SalesOrderItemSaveAfter implements ObserverInterface
 
         $quoteItem = $this->quoteItemFactory->create()->load($quoteItemId, 'item_id');
 
-        $salesOrderItem->setData('name_customer_add_to_cart', $quoteItem->getData('name_customer_add_to_cart'));
+        $salesOrderItem->setData('customer_id', $quoteItem->getData('customer_id'));
 
         $this->salesOrderItemResourceModel->save($salesOrderItem);
     }

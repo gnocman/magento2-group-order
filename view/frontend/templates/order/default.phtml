@@ -43,8 +43,15 @@ $_item = $block->getItem();
         <?php endif; ?>
         <?= $block->escapeHtml($_item->getDescription()) ?>
     </td>
+
+    <?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+    $customer = $customerRepository->getById($_item->getCustomerId());
+    $name = $customer->getFirstname() . ' ' . $customer->getLastname();
+    ?>
     <td class="col subtotal" style="text-align: left" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
-        <?= $block->escapeHtml($_item->getNameCustomerAddToCart()) ?>
+        <?= $block->escapeHtml($name) ?>
     </td>
     <td class="col sku" data-th="<?= $block->escapeHtml(__('SKU')) ?>">
         <?= /* @noEscape */ $block->prepareSku($block->getSku()) ?>

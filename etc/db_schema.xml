@@ -10,9 +10,9 @@
         <column xsi:type="varchar" name="order_cart_token" nullable="true" comment="Order Cart Token"/>
     </table>
     <table name="quote_item">
-        <column xsi:type="varchar" name="name_customer_add_to_cart" nullable="true" comment="Name Customer Add To Cat"/>
+        <column xsi:type="int" name="customer_id" nullable="true" comment="Customer ID"/>
     </table>
     <table name="sales_order_item">
-        <column xsi:type="varchar" name="name_customer_add_to_cart" nullable="true" comment="Name Customer Add To Cat"/>
+        <column xsi:type="int" name="customer_id" nullable="true" comment="Customer ID"/>
     </table>
 </schema>

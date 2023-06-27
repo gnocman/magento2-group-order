@@ -125,8 +125,15 @@ $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinima
             <?php endif; ?>
         </td>
 
+        <?php
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        $customer = $customerRepository->getById($_item->getCustomerId());
+        $name = $customer->getFirstname() . ' ' . $customer->getLastname();
+        ?>
+
         <td class="col customer-name" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
-            <?= $block->escapeHtml($_item->getNameCustomerAddToCart()) ?>
+            <?= $block->escapeHtml($name) ?>
         </td>
     </tr>
 </tbody>
