@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_quote_save_after">
+        <observer name="order_cart_token" instance="SmartOSC\GroupOrder\Observer\QuoteSaveAfter"/>
+    </event>
+    <event name="sales_quote_item_save_after">
+        <observer name="quote_item_save_after" instance="SmartOSC\GroupOrder\Observer\QuoteItemSaveAfter"/>
+    </event>
+    <event name="controller_action_predispatch_checkout_cart_add">
+        <observer name="validate_product_before_add_to_cart" instance="SmartOSC\GroupOrder\Observer\ValidateProductBeforeAddToCart" />
+    </event>
+    <event name="sales_order_item_save_after">
+        <observer name="name_customer_sales_after" instance="SmartOSC\GroupOrder\Observer\SalesOrderItemSaveAfter" />
+    </event>
+</config>

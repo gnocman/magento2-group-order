@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="order_items">
+            <arguments>
+                <argument name="columns" xsi:type="array">
+                    <item name="name_customer_add_to_cart" xsi:type="string" translate="true">Name Customer</item>
+                </argument>
+            </arguments>
+            <block class="Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn" name="column_name_customer_add_to_cart"
+                   template="SmartOSC_GroupOrder::order/view/items/renderer/default.phtml" group="column"/>
+        </referenceBlock>
+        <referenceBlock name="default_order_items_renderer">
+            <arguments>
+                <argument name="columns" xsi:type="array">
+                    <item name="name_customer_add_to_cart" xsi:type="string" translate="false">col-name_customer_add_to_cart</item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

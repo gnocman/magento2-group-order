@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="checkout_cart_item_renderers"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Checkout\Block\Cart" name="checkout.cart" template="Magento_Checkout::cart.phtml" cacheable="false">
+                <container name="checkout.cart.items" as="with-items">
+                    <container name="checkout.cart.container" htmlTag="div" htmlClass="cart-container" before="-">
+                        <block class="SmartOSC\GroupOrder\Block\Cart\Grid" name="checkout.cart.form" as="cart-items" template="SmartOSC_GroupOrder::cart/form.phtml" after="cart.summary">
+                            <arguments>
+                                <argument name="view_model" xsi:type="object">Magento\Checkout\ViewModel\Cart</argument>
+                            </arguments>
+                            <block class="Magento\Framework\View\Element\RendererList" name="checkout.cart.item.renderers" as="renderer.list"/>
+                        </block>
+                    </container>
+                    <block class="Magento\Checkout\Block\Cart\Crosssell" name="checkout.cart.crosssell" template="Magento_Catalog::product/list/items.phtml" after="-" ifconfig="checkout/cart/crosssell_enabled">
+                        <arguments>
+                            <argument name="type" xsi:type="string">crosssell</argument>
+                            <argument name="view_model" xsi:type="object">Magento\Catalog\ViewModel\Product\Listing\PreparePostData</argument>
+                        </arguments>
+                    </block>
+                </container>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

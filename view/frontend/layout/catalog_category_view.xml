@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+<!--        <referenceBlock name="product_list_toolbar" class="SmartOSC\GroupOrder\Block\QuoteUrl">-->
+<!--            <action method="setTemplate">-->
+<!--                <argument name="template" xsi:type="string">SmartOSC_GroupOrder::toolbar/toolbar.phtml</argument>-->
+<!--            </action>-->
+<!--        </referenceBlock>-->
+
+        <referenceContainer name="content">
+            <block class="SmartOSC\GroupOrder\Block\QuoteUrl" name="product_list_toolbar" cacheable="false" template="SmartOSC_GroupOrder::toolbar/toolbar.phtml">
+                <block class="Magento\Theme\Block\Html\Pager" name="product_list_toolbar_pager"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
