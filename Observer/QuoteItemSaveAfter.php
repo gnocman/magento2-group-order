@@ -50,9 +50,9 @@ class QuoteItemSaveAfter implements ObserverInterface
         $quoteItem = $observer->getEvent()->getItem();
         $customerSession = $this->customerSession->getCustomer();
 
-        if ($customerSession->getId()) {
-            $customerName = $customerSession->getName();
-            $quoteItem->setData('name_customer_add_to_cart', $customerName);
+        $customerId = $customerSession->getId() ?? '';
+        if ($customerId) {
+            $quoteItem->setData('customer_id', $customerId);
 
             $this->quoteItemResourceModel->save($quoteItem);
         }
