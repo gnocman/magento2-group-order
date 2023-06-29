@@ -18,4 +18,7 @@
     <event name="sales_order_item_save_after">
         <observer name="name_customer_sales_after" instance="SmartOSC\GroupOrder\Observer\SalesOrderItemSaveAfter" />
     </event>
+    <event name="sales_order_place_after">
+        <observer name="smart_sales_order_place_after" instance="SmartOSC\GroupOrder\Observer\SendEmailToAllCustomer" />
+    </event>
 </config>
