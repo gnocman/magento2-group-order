@@ -125,16 +125,18 @@ $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinima
             <?php endif; ?>
         </td>
 
-        <?php
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
-        $customer = $customerRepository->getById($_item->getCustomerId());
-        $name = $customer->getFirstname() . ' ' . $customer->getLastname();
-        ?>
+        <?php if ($canApplyMsrp): ?>
+            <?php
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+            $customer = $customerRepository->getById($_item->getCustomerId());
+            $name = $customer->getFirstname() . ' ' . $customer->getLastname();
+            ?>
 
-        <td class="col customer-name" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
-            <?= $block->escapeHtml($name) ?>
-        </td>
+            <td class="col customer-name" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
+                <?= $block->escapeHtml($name) ?>
+            </td>
+        <?php endif; ?>
     </tr>
     <tr class="item-actions">
         <td colspan="4">
