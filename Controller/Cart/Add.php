@@ -20,6 +20,8 @@ use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Filter\LocalizedToNormalized;
 use Magento\Quote\Model\QuoteRepository\SaveHandler;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Registry;
+use Magento\Customer\Model\Session as CustomerSession;
 
 /**
  * Controller for processing add to cart action.
@@ -41,6 +43,14 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
      * @var SaveHandler
      */
     private SaveHandler $saveHandler;
+    /**
+     * @var Registry
+     */
+    private Registry $registry;
+    /**
+     * @var CustomerSession
+     */
+    private CustomerSession $customerSession;
 
     /**
      * @param Context $context
@@ -51,6 +61,8 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
      * @param CustomerCart $cart
      * @param ProductRepositoryInterface $productRepository
      * @param SaveHandler $saveHandler
+     * @param Registry $registry
+     * @param CustomerSession $customerSession
      * @param RequestQuantityProcessor|null $quantityProcessor
      * @codeCoverageIgnore
      */
@@ -63,6 +75,8 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
         CustomerCart $cart,
         ProductRepositoryInterface $productRepository,
         SaveHandler $saveHandler,
+        Registry $registry,
+        CustomerSession $customerSession,
         ?RequestQuantityProcessor $quantityProcessor = null
     ) {
         parent::__construct(
@@ -78,6 +92,8 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
         $this->quantityProcessor = $quantityProcessor
             ?? ObjectManager::getInstance()->get(RequestQuantityProcessor::class);
         $this->saveHandler = $saveHandler;
+        $this->registry = $registry;
+        $this->customerSession = $customerSession;
     }
 
     /**
@@ -113,6 +129,13 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
             /** Check product availability */
             if (!$product) {
                 return $this->goBack();
+            }
+
+            $currentCustomerId = $this->customerSession->getCustomerId();
+            $this->registry->register('share_cart_customer_id', $currentCustomerId);
+
+            if (!empty($this->getRequest()->getParam('key'))) {
+                $this->registry->register('share_cart_has_token', true);
             }
 
             $this->cart->addProduct($product, $params);
