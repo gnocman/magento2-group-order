@@ -38,14 +38,13 @@ class DuplicateRowQuoteItem
      */
     public function afterGetItemByProduct(Quote $subject, $result, $product)
     {
-        if (!$this->registry->registry('share_cart_has_token')) {
+        if (!$this->registry->registry('share_cart_customer_id')) {
             return $result;
         }
 
         $customerId = $this->registry->registry('share_cart_customer_id');
 
         $this->registry->unregister('share_cart_customer_id');
-        $this->registry->unregister('share_cart_has_token');
 
         /** @var Item[] $items */
         $items = $subject->getItemsCollection()->getItems();

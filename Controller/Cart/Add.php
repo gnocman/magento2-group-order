@@ -131,12 +131,7 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
                 return $this->goBack();
             }
 
-            $currentCustomerId = $this->customerSession->getCustomerId();
-            $this->registry->register('share_cart_customer_id', $currentCustomerId);
-
-            if (!empty($this->getRequest()->getParam('key'))) {
-                $this->registry->register('share_cart_has_token', true);
-            }
+            $this->registry->register('share_cart_customer_id', $this->customerSession->getCustomerId());
 
             $this->cart->addProduct($product, $params);
             if (!empty($related)) {
