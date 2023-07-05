@@ -9,7 +9,7 @@ Group Order Extension helps customers in ordering their shopping cart with frien
 
 ## 1. Documentation
 
-- [Contribute on Github](https://github.com/gnocman/m246/tree/main/app/code/SmartOSC/GroupOrder)
+- [Contribute on Github](https://github.com/gnocman/magento2-group-order)
 
 ## 2. FAQs
 
@@ -26,8 +26,6 @@ A: Share button can be seen on **Subcategory** page.
 - Install via composer (recommend)
 
 Run the following command in Magento 2 root folder:
-
-With Marketing Automation (recommend):
 ```
 composer require smartosc/module-group-order
 php bin/magento setup:upgrade
@@ -58,10 +56,12 @@ The module is properly responsive with both mobile and desktop devices.
 
 ### For store owners
 - Enable/disable the extension
+- View Order Information
 
 ### For customers
 - Quickly and easily share the shopping cart
 - Briefly view the shared shopping cart
+- View Order Information
 
 ## 7. How to configure Group Order in Magento 2
 
@@ -88,7 +88,7 @@ After activating the module, customers can use **Group Order** button to deliver
 
 ![Magento 2 Group Order module](https://github.com/gnocman/m246/assets/55309917/2ae3c4bf-a15d-4875-a69b-96800b119867)
 
-**Example Url When Click Button: https://example.local.com/sharecart/index/index/key/I1GUnk8KMuMMY31/sub/4/**
+**Example Url When Click Button: https://example.local.com/grouporder/index/index/key/I1GUnk8KMuMMY31/sub/4/**
 
 - **After the customer clicks on the shared link, the interface will look like this**
 
@@ -105,6 +105,10 @@ After activating the module, customers can use **Group Order** button to deliver
 - To see what items the cart has added, in **Minicart** we click the **View Cart Group Order** or click **shopping cart** in the frontend button and can see the names of people who have added items to the Group Order
 
 ![View Cart  Group Order](https://github.com/gnocman/m246/assets/55309917/f8b01994-72b4-4709-b540-2ef50c79bacf)
+
+- After the customer Shares the order success link, the order information email will be sent to everyone who purchases in the Group Order
+
+![View Cart  Group Order](https://github.com/gnocman/m246/assets/55309917/0ce6b965-e431-4775-bb44-60b1ea055a82)
 
 - Customer can see the customer's name add items to cart in My Order.
 

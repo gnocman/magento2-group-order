@@ -218,7 +218,7 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
     {
         $token = $this->getRequest()->getParam('key');
         if ($token) {
-            return $this->_url->getUrl('sharecart/cart/index', ['key' => $token]);
+            return $this->_url->getUrl('grouporder/cart/index', ['key' => $token]);
         } else {
             return $this->_url->getUrl('checkout/cart', ['_secure' => true]);
         }

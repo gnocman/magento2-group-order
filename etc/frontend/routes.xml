@@ -7,7 +7,7 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="standard">
-        <route id="sharecart" frontName="sharecart">
+        <route id="grouporder" frontName="grouporder">
             <module name="SmartOSC_GroupOrder"/>
         </route>
     </router>

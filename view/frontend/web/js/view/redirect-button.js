@@ -31,7 +31,7 @@ define([
         redirect: function () {
             let currentUrl = window.location.href;
             let token = this.extractTokenFromUrl(currentUrl);
-            let controllerUrl = url.build('sharecart/cart/index');
+            let controllerUrl = url.build('grouporder/cart/index');
             window.open(controllerUrl + (token ? '?key=' + encodeURIComponent(token) : ''));
         },
 
