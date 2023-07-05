@@ -96,7 +96,7 @@ class QuoteUrl extends \Magento\Catalog\Block\Product\ProductList\Toolbar
         $subCateId = $this->getRequest()->getParam('id');
 
         return $this->urlBuilder->getUrl(
-            'sharecart',
+            'grouporder',
             [
                 'key' => $this->checkoutCart->getQuote()->getOrderCartToken(),
                 'sub' => $subCateId

@@ -34,7 +34,7 @@ class SetTemplate
      */
     public function afterGetItemRenderer(\Magento\Checkout\Block\Cart\AbstractCart $subject, $result)
     {
-        if (str_contains($this->request->getPathInfo(), '/sharecart/cart/index')) {
+        if (str_contains($this->request->getPathInfo(), '/grouporder/cart/index')) {
             $result->setTemplate('SmartOSC_GroupOrder::cart/default.phtml');
         }
 

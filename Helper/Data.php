@@ -13,7 +13,7 @@ use Magento\Store\Model\ScopeInterface;
 
 class Data extends AbstractHelper
 {
-    public const CONFIG_MODULE_PATH = 'sharecart/general/enabled';
+    public const CONFIG_MODULE_PATH = 'grouporder/general/enabled';
 
     /**
      * Get isEnabled
