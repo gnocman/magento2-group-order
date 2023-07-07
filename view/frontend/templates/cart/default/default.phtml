@@ -129,17 +129,24 @@ $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinima
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
         $customerSession = $objectManager->get(\Magento\Customer\Model\Session::class);
-
-        if (!$customerSession->isLoggedIn()) {
-            return;
-        }
-        $customer = $customerRepository->getById($_item->getCustomerId());
-        $name = $customer->getFirstname() . ' ' . $customer->getLastname();
         ?>
 
-        <td class="col customer-name" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
-            <?= $block->escapeHtml($name) ?>
-        </td>
+        <?php if ($customerSession->isLoggedIn()): ?>
+            <?php
+            $customerCurrent = $customerSession->getCustomerId();
+            $customerQuoteItem = $_item->getCustomerId();
+
+            $customer = $customerRepository->getById($customerQuoteItem);
+            $name = $customer->getFirstname() . ' ' . $customer->getLastname();
+
+            if ($customerCurrent == $customerQuoteItem) {
+                $name .= ' (You)';
+            }
+            ?>
+            <td class="col customer-name" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
+                <?= $block->escapeHtml($name) ?>
+            </td>
+        <?php endif; ?>
     </tr>
     <tr class="item-actions">
         <td colspan="4">

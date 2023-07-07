@@ -17,7 +17,7 @@ $isCustomerLoggedIn = $customerSession->isLoggedIn();
 
 <?php if ($isCustomerLoggedIn) : ?>
     <?php if ($groupOrderToken === null) : ?>
-        <button onclick="copyToClipboard('<?= $quoteUrl; ?>')">Initiate A Group Order On This Page.</button>
+        <button onclick="copyToClipboard('Let\'s choose your favorite items on any website together! Just choose the item you like and add it to the group\'s cart and you\'re done. Click the link below!'+ ' ' + '<?= $quoteUrl; ?>')">Initiate A Group Order On This Page.</button>
     <?php endif; ?>
 <?php endif; ?>
 
