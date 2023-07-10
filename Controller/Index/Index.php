@@ -16,6 +16,7 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Model\QuoteFactory;
 
 class Index extends Action implements HttpGetActionInterface
 {
@@ -23,17 +24,24 @@ class Index extends Action implements HttpGetActionInterface
      * @var CategoryRepositoryInterface
      */
     private CategoryRepositoryInterface $categoryRepository;
+    /**
+     * @var QuoteFactory
+     */
+    private QuoteFactory $quoteFactory;
 
     /**
      * @param Context $context
      * @param CategoryRepositoryInterface $categoryRepository
+     * @param QuoteFactory $quoteFactory
      */
     public function __construct(
         Context $context,
-        CategoryRepositoryInterface $categoryRepository
+        CategoryRepositoryInterface $categoryRepository,
+        QuoteFactory $quoteFactory
     ) {
         parent::__construct($context);
         $this->categoryRepository = $categoryRepository;
+        $this->quoteFactory = $quoteFactory;
     }
 
     /**
@@ -50,6 +58,9 @@ class Index extends Action implements HttpGetActionInterface
         $groupOrderToken = $this->getRequest()->getParam('key');
         $subCategoryId = $this->getRequest()->getParam('sub');
 
+        $quote = $this->quoteFactory->create()->load($groupOrderToken, 'order_cart_token');
+        $isActive = $quote->getIsActive();
+
         try {
             $subCategoryIdUrl = $this->categoryRepository->get($subCategoryId)->getUrl();
         } catch (\Exception $e) {
@@ -57,8 +68,17 @@ class Index extends Action implements HttpGetActionInterface
         }
 
         $url = $subCategoryIdUrl . '?key=' . $groupOrderToken;
+
+        if (empty($isActive)) {
+            $this->messageManager->addErrorMessage(
+                'You can\'t Group Order now because the URL link is out of date.'
+            );
+
+            return $resultRedirect->setPath('');
+        }
+
         $this->messageManager->addNoticeMessage(
-            'YOU CAN ONLY BUY ITEM FROM THIS PAGE AND VIEW THE ITEM IN THE MINICART.'
+            'YOU CAN ONLY BUY ITEMS FROM THIS PAGE AND VIEW THE ITEMS IN THE MINICART.'
         );
 
         return $resultRedirect->setPath($url);
