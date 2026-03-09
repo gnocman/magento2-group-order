@@ -9,6 +9,12 @@
     <table name="quote">
         <column xsi:type="varchar" name="order_cart_token" nullable="true" comment="Order Cart Token"/>
     </table>
+    <table name="sales_order">
+        <column xsi:type="varchar" name="order_cart_token" nullable="true" comment="Order Cart Token"/>
+    </table>
+    <table name="sales_order_grid">
+        <column xsi:type="varchar" name="order_cart_token" nullable="true" comment="Order Cart Token"/>
+    </table>
     <table name="quote_item">
         <column xsi:type="int" name="customer_id" nullable="true" comment="Customer ID"/>
     </table>

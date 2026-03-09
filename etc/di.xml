@@ -22,4 +22,28 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\Reporting">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="group_order_grid_data_source" xsi:type="string">SmartOSC\GroupOrder\Model\ResourceModel\Order\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="group_order_grid_data_source" xsi:type="string">SmartOSC\GroupOrder\Model\ResourceModel\Order\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Sales\Model\ResourceModel\Grid">
+        <arguments>
+            <argument name="columns" xsi:type="array">
+                <item name="order_cart_token" xsi:type="string">sales_order.order_cart_token</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
