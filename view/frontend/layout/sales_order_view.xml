@@ -25,6 +25,9 @@
             <block class="Magento\Sales\Block\Order\View" name="order.comments" template="Magento_Sales::order/order_comments.phtml" before="sales.order.info.links"/>
             <block class="Magento\Sales\Block\Order\View" name="sales.order.view" cacheable="false" after="sales.order.info.links">
                 <block class="Magento\Sales\Block\Order\Items" name="order_items" template="SmartOSC_GroupOrder::order/items.phtml">
+                    <arguments>
+                        <argument name="cart_item_customer_view_model" xsi:type="object">SmartOSC\GroupOrder\ViewModel\CartItemCustomer</argument>
+                    </arguments>
                     <block class="Magento\Framework\View\Element\RendererList" name="sales.order.items.renderers" as="renderer.list"/>
                     <block class="Magento\Theme\Block\Html\Pager" name="sales_order_item_pager"/>
                     <block class="Magento\Sales\Block\Order\Totals" name="order_totals" template="Magento_Sales::order/totals.phtml">

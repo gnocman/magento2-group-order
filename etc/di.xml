@@ -8,4 +8,18 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\Checkout\Controller\Cart\Add" type="SmartOSC\GroupOrder\Controller\Cart\Add"/>
     <preference for="Magento\Sales\Model\Order\Email\Container\OrderIdentity" type="SmartOSC\GroupOrder\Model\Order\Email\Container\OrderIdentity"/>
+
+    <type name="SmartOSC\GroupOrder\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="SmartOSC\GroupOrder\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">groupOrderLogger</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">SmartOSC\GroupOrder\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

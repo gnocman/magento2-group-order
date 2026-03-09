@@ -3,48 +3,46 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 declare(strict_types=1);
 
 namespace SmartOSC\GroupOrder\Plugin\QuoteItem;
 
-use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
+use Magento\Framework\Registry;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
-use Magento\Framework\Registry;
 
 class DuplicateRowQuoteItem
 {
-    /**
-     * @var Registry
-     */
-    private Registry $registry;
+    private const REGISTRY_KEY = 'share_cart_customer_id';
 
     /**
      * @param Registry $registry
      */
     public function __construct(
-        Registry $registry
+        private Registry $registry
     ) {
-        $this->registry = $registry;
     }
 
     /**
-     * Plugin afterGetItemByProduct
+     * Allow duplicate quote items per customer in a group order
+     *
+     * In a standard cart, Magento merges quantities for the same product.
+     * For group orders, each customer's addition should be a separate row.
      *
      * @param Quote $subject
-     * @param bool $result
-     * @param $product
-     * @return false|Item|mixed
+     * @param bool|Item|null $result
+     * @param mixed $product
+     * @return false|Item|null
      */
     public function afterGetItemByProduct(Quote $subject, $result, $product)
     {
-        if (!$this->registry->registry('share_cart_customer_id')) {
+        $customerId = $this->registry->registry(self::REGISTRY_KEY);
+
+        if (!$customerId) {
             return $result;
         }
-
-        $customerId = $this->registry->registry('share_cart_customer_id');
-
-        $this->registry->unregister('share_cart_customer_id');
 
         /** @var Item[] $items */
         $items = $subject->getItemsCollection()->getItems();
@@ -52,13 +50,14 @@ class DuplicateRowQuoteItem
         foreach ($items as $item) {
             if (!$item->isDeleted()
                 && $item->getProduct()
-                && $item->getProduct()->getStatus() !== Status::STATUS_DISABLED
+                && (int)$item->getProduct()->getStatus() !== ProductStatus::STATUS_DISABLED
                 && $item->representProduct($product)
-                && $item->getCustomerId() == $customerId
+                && (int)$item->getCustomerId() === (int)$customerId
             ) {
                 return $item;
             }
         }
+
         return false;
     }
 }

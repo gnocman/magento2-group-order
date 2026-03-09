@@ -16,12 +16,17 @@ class Data extends AbstractHelper
     public const CONFIG_MODULE_PATH = 'grouporder/general/enabled';
 
     /**
-     * Get isEnabled
+     * Check if Group Order module is enabled
      *
+     * @param int|null $storeId
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(?int $storeId = null): bool
     {
-        return $this->scopeConfig->getValue(self::CONFIG_MODULE_PATH, ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->isSetFlag(
+            self::CONFIG_MODULE_PATH,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 }

@@ -5,10 +5,16 @@
  * See COPYING.txt for license details.
  */
 -->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <referenceBlock name="sales.order.items.renderers">
-            <block class="Magento\Sales\Block\Order\Item\Renderer\DefaultRenderer" name="sales.order.items.renderers.default" as="default" template="SmartOSC_GroupOrder::order/default.phtml"/>
+        <referenceBlock name="sales.order.items.renderers.default">
+            <arguments>
+                <argument name="cart_item_customer_view_model" xsi:type="object">SmartOSC\GroupOrder\ViewModel\CartItemCustomer</argument>
+            </arguments>
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">SmartOSC_GroupOrder::order/default.phtml</argument>
+            </action>
         </referenceBlock>
     </body>
 </page>

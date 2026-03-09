@@ -7,8 +7,10 @@
 /**
  * @var \Magento\Sales\Block\Order\Item\Renderer\DefaultRenderer $block
  * @var \Magento\Framework\Locale\LocaleFormatter $localeFormatter
+ * @var \SmartOSC\GroupOrder\ViewModel\CartItemCustomer $viewModel
  */
 $_item = $block->getItem();
+$viewModel = $block->getData('cart_item_customer_view_model');
 ?>
 <tr id="order-item-row-<?= (int) $_item->getId() ?>">
     <td class="col name" data-th="<?= $block->escapeHtml(__('Product Name')) ?>">
@@ -31,7 +33,7 @@ $_item = $block->getItem();
                         <?php endif; ?>
                     </dd>
                 <?php else: ?>
-                    <?php $optionValue = isset($_option['print_value']) ? $_option['print_value'] : $_option['value'] ?>
+                    <?php $optionValue = $_option['print_value'] ?? $_option['value'] ?>
                     <dd><?= $block->escapeHtml($optionValue) ?></dd>
                 <?php endif; ?>
             <?php endforeach; ?>
@@ -44,14 +46,10 @@ $_item = $block->getItem();
         <?= $block->escapeHtml($_item->getDescription()) ?>
     </td>
 
-    <?php
-    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-    $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
-    $customer = $customerRepository->getById($_item->getCustomerId());
-    $name = $customer->getFirstname() . ' ' . $customer->getLastname();
-    ?>
-    <td class="col subtotal" style="text-align: left" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
-        <?= $block->escapeHtml($name) ?>
+    <td class="col name-customer" style="text-align: left" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
+        <?php if ($viewModel): ?>
+            <?= $block->escapeHtml($viewModel->getCustomerInfo((int) $_item->getData('customer_id'))) ?>
+        <?php endif; ?>
     </td>
     <td class="col sku" data-th="<?= $block->escapeHtml(__('SKU')) ?>">
         <?= /* @noEscape */ $block->prepareSku($block->getSku()) ?>

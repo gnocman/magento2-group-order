@@ -7,12 +7,14 @@
 // phpcs:disable Magento2.Templates.ThisInTemplate
 // phpcs:disable Magento2.Files.LineLength, Generic.Files.LineLength
 
-/** @var $block \Magento\Sales\Block\Order\Email\Items\DefaultItems */
-
-/** @var $_item \Magento\Sales\Model\Order\Item */
-/** @var \Magento\Framework\Escaper $escaper */
+/**
+ * @var \Magento\Sales\Block\Order\Email\Items\DefaultItems $block
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \SmartOSC\GroupOrder\ViewModel\CartItemCustomer $viewModel
+ */
 $_item = $block->getItem();
 $_order = $_item->getOrder();
+$viewModel = $block->getData('cart_item_customer_view_model');
 ?>
 <tr>
     <td class="item-info<?= ($block->getItemOptions() ? ' has-extra' : '') ?>">
@@ -35,13 +37,11 @@ $_order = $_item->getOrder();
         <?= $escaper->escapeHtml($_item->getDescription()) ?>
     </td>
 
-    <?php
-    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-    $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
-    $customer = $customerRepository->getById($_item->getCustomerId());
-    $name = $customer->getFirstname() . ' ' . $customer->getLastname();
-    ?>
-    <td class="item-name-customer"><?= $name ?></td>
+    <td class="item-name-customer">
+        <?php if ($viewModel): ?>
+            <?= $escaper->escapeHtml($viewModel->getCustomerInfo((int) $_item->getData('customer_id'))) ?>
+        <?php endif; ?>
+    </td>
 
     <td class="item-qty"><?= (float) $_item->getQtyOrdered() ?></td>
     <td class="item-price">

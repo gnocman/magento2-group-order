@@ -9,12 +9,14 @@
     <update handle="checkout_item_price_renderers"/>
     <body>
         <referenceBlock name="checkout.cart.item.renderers">
-            <block class="Magento\Checkout\Block\Cart\Item\Renderer" name="checkout.cart.item.renderers.simple" as="simple" template="SmartOSC_GroupOrder::cart/default/default.phtml">
-                <block class="Magento\Checkout\Block\Cart\Item\Renderer\Actions" name="checkout.cart.item.renderers.simple.actions" as="actions">
-                    <block class="Magento\Checkout\Block\Cart\Item\Renderer\Actions\Edit" name="checkout.cart.item.renderers.simple.actions.edit" template="Magento_Checkout::cart/item/renderer/actions/edit.phtml"/>
-                    <block class="Magento\Checkout\Block\Cart\Item\Renderer\Actions\Remove" name="checkout.cart.item.renderers.simple.actions.remove" template="Magento_Checkout::cart/item/renderer/actions/remove.phtml"/>
-                </block>
-            </block>
+        <referenceBlock name="checkout.cart.item.renderers.simple">
+            <arguments>
+                <argument name="cart_item_customer_view_model" xsi:type="object">SmartOSC\GroupOrder\ViewModel\CartItemCustomer</argument>
+            </arguments>
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">SmartOSC_GroupOrder::cart/default/default.phtml</argument>
+            </action>
+        </referenceBlock>
         </referenceBlock>
     </body>
 </page>

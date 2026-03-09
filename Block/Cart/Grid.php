@@ -9,10 +9,12 @@ declare(strict_types=1);
 namespace SmartOSC\GroupOrder\Block\Cart;
 
 use Magento\Catalog\Model\ResourceModel\Url;
-use Magento\Checkout\Helper\Cart;
-use Magento\Checkout\Model\Session;
+use Magento\Checkout\Helper\Cart as CartHelper;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
+use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory;
 
@@ -21,10 +23,10 @@ class Grid extends \Magento\Checkout\Block\Cart\Grid
     /**
      * @param Context $context
      * @param \Magento\Customer\Model\Session $customerSession
-     * @param Session $checkoutSession
+     * @param CheckoutSession $checkoutSession
      * @param Url $catalogUrlBuilder
-     * @param Cart $cartHelper
-     * @param \Magento\Framework\App\Http\Context $httpContext
+     * @param CartHelper $cartHelper
+     * @param HttpContext $httpContext
      * @param CollectionFactory $itemCollectionFactory
      * @param JoinProcessorInterface $joinProcessor
      * @param QuoteFactory $quoteFactory
@@ -33,13 +35,13 @@ class Grid extends \Magento\Checkout\Block\Cart\Grid
     public function __construct(
         Context $context,
         \Magento\Customer\Model\Session $customerSession,
-        Session $checkoutSession,
+        CheckoutSession $checkoutSession,
         Url $catalogUrlBuilder,
-        Cart $cartHelper,
-        \Magento\Framework\App\Http\Context $httpContext,
+        CartHelper $cartHelper,
+        HttpContext $httpContext,
         CollectionFactory $itemCollectionFactory,
         JoinProcessorInterface $joinProcessor,
-        QuoteFactory $quoteFactory,
+        private QuoteFactory $quoteFactory,
         array $data = []
     ) {
         parent::__construct(
@@ -53,28 +55,21 @@ class Grid extends \Magento\Checkout\Block\Cart\Grid
             $joinProcessor,
             $data
         );
-        $this->customerSession = $customerSession;
-        $this->checkoutSession = $checkoutSession;
-        $this->catalogUrlBuilder = $catalogUrlBuilder;
-        $this->cartHelper = $cartHelper;
-        $this->httpContext = $httpContext;
-        $this->itemCollectionFactory = $itemCollectionFactory;
-        $this->joinProcessor = $joinProcessor;
-        $this->quoteFactory = $quoteFactory;
     }
 
     /**
-     * Load loadQuoteByToken
+     * Load a quote by the group order token parameter
      *
-     * @return \Magento\Quote\Model\Quote
+     * @return Quote
      */
-    public function loadQuoteByToken()
+    public function loadQuoteByToken(): Quote
     {
-        $token = $this->getRequest()->getParam('key') ?? '';
-        if ($token) {
+        $token = (string)($this->getRequest()->getParam('key') ?? '');
+
+        if ($token !== '') {
             return $this->quoteFactory->create()->load($token, 'order_cart_token');
-        } else {
-            return $this->quoteFactory->create();
         }
+
+        return $this->quoteFactory->create();
     }
 }

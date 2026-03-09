@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 declare(strict_types=1);
 
 namespace SmartOSC\GroupOrder\Controller\Cart;
@@ -10,52 +11,32 @@ namespace SmartOSC\GroupOrder\Controller\Cart;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Checkout\Model\Cart as CustomerCart;
 use Magento\Checkout\Model\Cart\RequestQuantityProcessor;
-use Magento\Checkout\Model\Session;
+use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Data\Form\FormKey\Validator;
+use Magento\Framework\Escaper;
 use Magento\Framework\Filter\LocalizedToNormalized;
+use Magento\Framework\Locale\ResolverInterface as LocaleResolver;
+use Magento\Framework\Registry;
 use Magento\Quote\Model\QuoteRepository\SaveHandler;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\Registry;
-use Magento\Customer\Model\Session as CustomerSession;
+use SmartOSC\GroupOrder\Logger\Logger as GroupOrderLogger;
 
 /**
- * Controller for processing add to cart action.
+ * Controller for processing add to cart action for Group Order.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Add extends \Magento\Checkout\Controller\Cart\Add
 {
     /**
-     * @var ProductRepositoryInterface
-     */
-    protected $productRepository;
-
-    /**
-     * @var RequestQuantityProcessor
-     */
-    private $quantityProcessor;
-    /**
-     * @var SaveHandler
-     */
-    private SaveHandler $saveHandler;
-    /**
-     * @var Registry
-     */
-    private Registry $registry;
-    /**
-     * @var CustomerSession
-     */
-    private CustomerSession $customerSession;
-
-    /**
      * @param Context $context
      * @param ScopeConfigInterface $scopeConfig
-     * @param Session $checkoutSession
+     * @param CheckoutSession $checkoutSession
      * @param StoreManagerInterface $storeManager
      * @param Validator $formKeyValidator
      * @param CustomerCart $cart
@@ -63,21 +44,28 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
      * @param SaveHandler $saveHandler
      * @param Registry $registry
      * @param CustomerSession $customerSession
-     * @param RequestQuantityProcessor|null $quantityProcessor
+     * @param RequestQuantityProcessor $quantityProcessor
+     * @param Escaper $escaper
+     * @param LoggerInterface $logger
+     * @param LocaleResolver $localeResolver
+     *
      * @codeCoverageIgnore
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator,
+        Context $context,
+        ScopeConfigInterface $scopeConfig,
+        CheckoutSession $checkoutSession,
+        StoreManagerInterface $storeManager,
+        Validator $formKeyValidator,
         CustomerCart $cart,
         ProductRepositoryInterface $productRepository,
-        SaveHandler $saveHandler,
-        Registry $registry,
-        CustomerSession $customerSession,
-        ?RequestQuantityProcessor $quantityProcessor = null
+        private SaveHandler $saveHandler,
+        private Registry $registry,
+        private CustomerSession $customerSession,
+        private RequestQuantityProcessor $quantityProcessor,
+        private Escaper $escaper,
+        private GroupOrderLogger $logger,
+        private LocaleResolver $localeResolver
     ) {
         parent::__construct(
             $context,
@@ -88,12 +76,6 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
             $cart,
             $productRepository
         );
-        $this->productRepository = $productRepository;
-        $this->quantityProcessor = $quantityProcessor
-            ?? ObjectManager::getInstance()->get(RequestQuantityProcessor::class);
-        $this->saveHandler = $saveHandler;
-        $this->registry = $registry;
-        $this->customerSession = $customerSession;
     }
 
     /**
@@ -105,20 +87,16 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
     public function execute()
     {
         if (!$this->_formKeyValidator->validate($this->getRequest())) {
-            $this->messageManager->addErrorMessage(
-                __('Your session has expired')
-            );
+            $this->messageManager->addErrorMessage(__('Your session has expired'));
             return $this->resultRedirectFactory->create()->setPath('*/*/');
         }
 
         $params = $this->getRequest()->getParams();
+        $this->logger->info('Add to Cart Params: ' . json_encode($params));
+
         try {
             if (isset($params['qty'])) {
-                $filter = new LocalizedToNormalized(
-                    ['locale' => $this->_objectManager->get(
-                        \Magento\Framework\Locale\ResolverInterface::class
-                    )->getLocale()]
-                );
+                $filter = new LocalizedToNormalized(['locale' => $this->localeResolver->getLocale()]);
                 $params['qty'] = $this->quantityProcessor->prepareQuantity($params['qty']);
                 $params['qty'] = $filter->filter($params['qty']);
             }
@@ -126,7 +104,6 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
             $product = $this->_initProduct();
             $related = $this->getRequest()->getParam('related_product');
 
-            /** Check product availability */
             if (!$product) {
                 return $this->goBack();
             }
@@ -134,6 +111,7 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
             $this->registry->register('share_cart_customer_id', $this->customerSession->getCustomerId());
 
             $this->cart->addProduct($product, $params);
+
             if (!empty($related)) {
                 $this->cart->addProductsByIds(explode(',', $related));
             }
@@ -145,9 +123,6 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
                 $this->cart->save();
             }
 
-            /**
-             * @todo remove wishlist observer \Magento\Wishlist\Observer\AddToCart
-             */
             $this->_eventManager->dispatch(
                 'checkout_cart_add_product_complete',
                 ['product' => $product, 'request' => $this->getRequest(), 'response' => $this->getResponse()]
@@ -155,11 +130,9 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
 
             if (!$this->_checkoutSession->getNoCartRedirect(true)) {
                 if ($this->shouldRedirectToCart()) {
-                    $message = __(
-                        'You added %1 to your shopping cart.',
-                        $product->getName()
+                    $this->messageManager->addSuccessMessage(
+                        __('You added %1 to your shopping cart.', $product->getName())
                     );
-                    $this->messageManager->addSuccessMessage($message);
                 } else {
                     $this->messageManager->addComplexSuccessMessage(
                         'addCartSuccessMessage',
@@ -169,24 +142,25 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
                         ]
                     );
                 }
+
                 if ($this->cart->getQuote()->getHasError()) {
-                    $errors = $this->cart->getQuote()->getErrors();
-                    foreach ($errors as $error) {
+                    foreach ($this->cart->getQuote()->getErrors() as $error) {
                         $this->messageManager->addErrorMessage($error->getText());
                     }
                 }
+
                 return $this->goBack(null, $product);
             }
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             if ($this->_checkoutSession->getUseNotice(true)) {
                 $this->messageManager->addNoticeMessage(
-                    $this->_objectManager->get(\Magento\Framework\Escaper::class)->escapeHtml($e->getMessage())
+                    $this->escaper->escapeHtml($e->getMessage())
                 );
             } else {
                 $messages = array_unique(explode("\n", $e->getMessage()));
                 foreach ($messages as $message) {
                     $this->messageManager->addErrorMessage(
-                        $this->_objectManager->get(\Magento\Framework\Escaper::class)->escapeHtml($message)
+                        $this->escaper->escapeHtml($message)
                     );
                 }
             }
@@ -200,36 +174,40 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
         } catch (\Exception $e) {
             $this->messageManager->addExceptionMessage(
                 $e,
-                __('We can\'t add this item to your shopping cart right now.')
+                __("We can't add this item to your shopping cart right now.")
             );
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->logger->error('Error adding product to cart: ' . $e->getMessage());
+            $this->logger->critical($e);
             return $this->goBack();
+        } finally {
+            $this->registry->unregister('share_cart_customer_id');
         }
 
         return $this->getResponse();
     }
 
     /**
-     * Returns cart url
+     * Returns cart URL — redirects to group order cart page if token is present
      *
      * @return string
      */
-    private function getCartUrl()
+    private function getCartUrl(): string
     {
         $token = $this->getRequest()->getParam('key');
+
         if ($token) {
             return $this->_url->getUrl('grouporder/cart/index', ['key' => $token]);
-        } else {
-            return $this->_url->getUrl('checkout/cart', ['_secure' => true]);
         }
+
+        return $this->_url->getUrl('checkout/cart', ['_secure' => true]);
     }
 
     /**
-     * Is redirect should be performed after the product was added to cart.
+     * Check if redirect to cart is configured
      *
      * @return bool
      */
-    private function shouldRedirectToCart()
+    private function shouldRedirectToCart(): bool
     {
         return $this->_scopeConfig->isSetFlag(
             'checkout/cart/redirect_to_cart',

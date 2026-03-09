@@ -8,7 +8,11 @@
                 </argument>
             </arguments>
             <block class="Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn" name="column_name_customer_add_to_cart"
-                   template="SmartOSC_GroupOrder::order/view/items/renderer/default.phtml" group="column"/>
+                   template="SmartOSC_GroupOrder::order/view/items/renderer/default.phtml" group="column">
+                <arguments>
+                    <argument name="cart_item_customer_view_model" xsi:type="object">SmartOSC\GroupOrder\ViewModel\CartItemCustomer</argument>
+                </arguments>
+            </block>
         </referenceBlock>
         <referenceBlock name="default_order_items_renderer">
             <arguments>

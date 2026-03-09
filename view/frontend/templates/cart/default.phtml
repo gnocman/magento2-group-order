@@ -7,11 +7,16 @@
 // phpcs:disable Magento2.Templates.ThisInTemplate
 // phpcs:disable Generic.Files.LineLength
 
-/** @var $block \Magento\Checkout\Block\Cart\Item\Renderer */
+/**
+ * @var \Magento\Checkout\Block\Cart\Item\Renderer $block
+ * @var \SmartOSC\GroupOrder\ViewModel\CartItemCustomer $viewModel
+ */
 
 $_item = $block->getItem();
 $product = $_item->getProduct();
 $isVisibleProduct = $product->isVisibleInSiteVisibility();
+$viewModel = $block->getData('cart_item_customer_view_model');
+
 /** @var \Magento\Msrp\Helper\Data $helper */
 $helper = $this->helper(Magento\Msrp\Helper\Data::class);
 $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinimalPriceLessMsrp($product);
@@ -125,26 +130,9 @@ $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinima
             <?php endif; ?>
         </td>
 
-        <?php
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
-        $customerSession = $objectManager->get(\Magento\Customer\Model\Session::class);
-        ?>
-
-        <?php if ($customerSession->isLoggedIn()): ?>
-            <?php
-            $customerCurrent = $customerSession->getCustomerId();
-            $customerQuoteItem = $_item->getCustomerId();
-
-            $customer = $customerRepository->getById($customerQuoteItem);
-            $name = $customer->getFirstname() . ' ' . $customer->getLastname();
-
-            if ($customerCurrent == $customerQuoteItem) {
-                $name .= ' (You)';
-            }
-            ?>
+        <?php if ($viewModel && $viewModel->isLoggedIn()): ?>
             <td class="col customer-name" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
-                <?= $block->escapeHtml($name) ?>
+                <?= $block->escapeHtml($viewModel->getCustomerInfo((int) $_item->getData('customer_id'))) ?>
             </td>
         <?php endif; ?>
     </tr>

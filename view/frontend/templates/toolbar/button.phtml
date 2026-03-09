@@ -3,32 +3,44 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
 ?>
 <?php
-/** @var SmartOSC\GroupOrder\Block\QuoteUrl $block */
+/**
+ * @var \SmartOSC\GroupOrder\Block\QuoteUrl $block
+ */
 $quoteUrl = $block->getQuoteUrl();
-
 $groupOrderToken = $this->getRequest()->getParam('key');
+$isEnabled = $this->helper(\SmartOSC\GroupOrder\Helper\Data::class)->isEnabled();
 
-$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-$customerSession = $objectManager->get(\Magento\Customer\Model\Session::class);
-$isCustomerLoggedIn = $customerSession->isLoggedIn();
+/** @var \SmartOSC\GroupOrder\ViewModel\CartItemCustomer $viewModel */
+$viewModel = $block->getData('cart_item_customer_view_model');
+$isCustomerLoggedIn = $viewModel ? $viewModel->isLoggedIn() : false;
 ?>
 
-<?php if ($isCustomerLoggedIn) : ?>
-    <?php if ($groupOrderToken === null) : ?>
-        <button onclick="copyToClipboard('Let\'s choose your favorite items on any website together! Just choose the item you like and add it to the group\'s cart and you\'re done. Click the link below!'+ ' ' + '<?= $quoteUrl; ?>')">Initiate A Group Order On This Page.</button>
-    <?php endif; ?>
+<?php if ($isEnabled && $isCustomerLoggedIn && $groupOrderToken === null): ?>
+    <button onclick="copyGroupOrderUrl('<?= $block->escapeJs(
+        "Let's choose your favorite items on any website together! Just choose the item you like and add it to the group's cart and you're done. Click the link below! " . $quoteUrl
+    ) ?>')">
+        <?= $block->escapeHtml(__('Initiate A Group Order On This Page.')) ?>
+    </button>
 <?php endif; ?>
 
 <script>
-    function copyToClipboard(text) {
-        let dummy = document.createElement("input");
-        document.body.appendChild(dummy);
-        dummy.setAttribute("value", text);
-        dummy.select();
-        document.execCommand("copy");
-        document.body.removeChild(dummy);
-        alert("Group Order URL copied!");
+    function copyGroupOrderUrl(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(function () {
+                alert('<?= $block->escapeJs(__('Group Order URL copied!')) ?>');
+            });
+        } else {
+            var dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.setAttribute('value', text);
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            alert('<?= $block->escapeJs(__('Group Order URL copied!')) ?>');
+        }
     }
 </script>

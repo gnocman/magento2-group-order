@@ -6,9 +6,12 @@
 
 // phpcs:disable Magento2.Templates.ThisInTemplate
 
-/**  @var $block \Magento\Checkout\Block\Cart\Grid */
+/**
+ * @var $block \Magento\Checkout\Block\Cart\Grid
+ */
+
+$mergedCells = ($this->helper(Magento\Tax\Helper\Data::class)->displayCartBothPrices() ? 2 : 1);
 ?>
-<?php $mergedCells = ($this->helper(Magento\Tax\Helper\Data::class)->displayCartBothPrices() ? 2 : 1); ?>
 <?= $block->getChildHtml('form_before') ?>
 <form action="<?= $block->escapeUrl($block->getUrl('checkout/cart/updatePost')) ?>"
       method="post"
@@ -36,7 +39,7 @@
                 <th class="col price" scope="col"><span><?= $block->escapeHtml(__('Price')) ?></span></th>
                 <th class="col qty" scope="col"><span><?= $block->escapeHtml(__('Qty')) ?></span></th>
                 <th class="col subtotal" scope="col"><span><?= $block->escapeHtml(__('Subtotal')) ?></span></th>
-                <th class="col subtotal" scope="col"><span><?= $block->escapeHtml(__('Name Customer')) ?></span></th>
+                <th class="col customer-name" scope="col"><span><?= $block->escapeHtml(__('Name Customer')) ?></span></th>
             </tr>
             </thead>
             <?php foreach ($block->getItems() as $_item): ?>
@@ -57,7 +60,7 @@
                 <span><?= $block->escapeHtml(__('Continue Shopping')) ?></span>
             </a>
         <?php endif; ?>
-        <?php if ($block->getViewModel()->isClearShoppingCartEnabled()): ?>
+        <?php if ($block->getViewModel() && $block->getViewModel()->isClearShoppingCartEnabled()): ?>
             <button type="button"
                     name="update_cart_action"
                     data-cart-empty=""

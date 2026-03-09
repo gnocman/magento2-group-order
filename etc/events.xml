@@ -6,17 +6,14 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="sales_quote_save_after">
-        <observer name="order_cart_token" instance="SmartOSC\GroupOrder\Observer\QuoteSaveAfter"/>
+    <event name="sales_quote_save_before">
+        <observer name="order_cart_token" instance="SmartOSC\GroupOrder\Observer\QuoteSaveBefore"/>
     </event>
-    <event name="sales_quote_item_save_after">
-        <observer name="quote_item_save_after" instance="SmartOSC\GroupOrder\Observer\QuoteItemSaveAfter"/>
+    <event name="sales_quote_item_save_before">
+        <observer name="quote_item_save_before" instance="SmartOSC\GroupOrder\Observer\QuoteItemSaveBefore"/>
     </event>
     <event name="controller_action_predispatch_checkout_cart_add">
         <observer name="validate_product_before_add_to_cart" instance="SmartOSC\GroupOrder\Observer\ValidateProductBeforeAddToCart" />
-    </event>
-    <event name="sales_order_item_save_after">
-        <observer name="name_customer_sales_after" instance="SmartOSC\GroupOrder\Observer\SalesOrderItemSaveAfter" />
     </event>
     <event name="sales_model_service_quote_submit_before">
         <observer name="sales_model_service_quote_submit_before_send_email" instance="SmartOSC\GroupOrder\Observer\EmailCC" />

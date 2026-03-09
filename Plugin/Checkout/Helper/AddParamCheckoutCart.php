@@ -9,47 +9,34 @@ declare(strict_types=1);
 namespace SmartOSC\GroupOrder\Plugin\Checkout\Helper;
 
 use Magento\Checkout\Helper\Cart as CartHelper;
-use Magento\Framework\UrlInterface;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\UrlInterface;
 
 class AddParamCheckoutCart
 {
     /**
-     * @var UrlInterface
-     */
-    private UrlInterface $url;
-    /**
-     * @var RequestInterface
-     */
-    private RequestInterface $request;
-
-    /**
-     * AddParamCheckoutCart constructor.
-     *
      * @param UrlInterface $url
      * @param RequestInterface $request
      */
     public function __construct(
-        UrlInterface $url,
-        RequestInterface $request
+        private UrlInterface $url,
+        private RequestInterface $request
     ) {
-        $this->url = $url;
-        $this->request = $request;
     }
 
     /**
-     * Add custom parameter to the add to cart URL
+     * Append group order token to add-to-cart URL when in group order context
      *
      * @param CartHelper $subject
      * @param string $result
      * @return string
      */
-    public function afterGetAddUrl(CartHelper $subject, $result)
+    public function afterGetAddUrl(CartHelper $subject, string $result): string
     {
-        $params = $this->request->getParam('key');
+        $token = (string)$this->request->getParam('key');
 
-        if ($params) {
-            return $this->url->getUrl('checkout/cart/add', ['key' => $params]);
+        if ($token) {
+            return $this->url->getUrl('checkout/cart/add', ['key' => $token]);
         }
 
         return $result;

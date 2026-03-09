@@ -11,6 +11,7 @@
             <block class="Magento\Checkout\Block\Cart\Grid" name="checkout.cart.form" as="cart-items" template="SmartOSC_GroupOrder::cart/default/form.phtml" after="cart.summary">
                 <arguments>
                     <argument name="view_model" xsi:type="object">Magento\Checkout\ViewModel\Cart</argument>
+                    <argument name="cart_item_customer_view_model" xsi:type="object">SmartOSC\GroupOrder\ViewModel\CartItemCustomer</argument>
                 </arguments>
                 <block class="Magento\Framework\View\Element\RendererList" name="checkout.cart.item.renderers" as="renderer.list"/>
                 <block class="Magento\Framework\View\Element\Text\ListText" name="checkout.cart.order.actions"/>

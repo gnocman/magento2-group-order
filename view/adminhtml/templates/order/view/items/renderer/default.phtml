@@ -3,17 +3,23 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+/** @var \Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn $block */
+/** @var \SmartOSC\GroupOrder\ViewModel\CartItemCustomer $viewModel */
 ?>
-<?php /** @var \Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn $block */ ?>
-<?php $_item = $block->getItem() ?>
 
 <?php
-    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-    $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
-    $customer = $customerRepository->getById($_item->getData('customer_id'));
-    $name = $customer->getFirstname() . ' ' . $customer->getLastname();
+$_item = $block->getItem();
+$viewModel = $block->getData('cart_item_customer_view_model');
+$customer_id = $_item->getData('customer_id');
+
+$name = '';
+if ($viewModel && $customer_id) {
+    $name = $viewModel->getCustomerInfo((int)$customer_id, false);
+}
 ?>
 
+<!-- Item ID: <?= $_item->getId() ?> | Customer ID: <?= var_export($customer_id, true) ?> -->
 <div>
-    <?= /* @noEscape */ $name ?>
+    <?= $block->escapeHtml($name) ?>
 </div>

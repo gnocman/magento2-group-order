@@ -1,0 +1,9 @@
+<?php
+/**
+ * Shopping cart template for Group Order - bypasses empty cart check
+ *
+ * @var $block \Magento\Checkout\Block\Cart
+ */
+
+// phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
+echo $block->getChildHtml('with-items');
