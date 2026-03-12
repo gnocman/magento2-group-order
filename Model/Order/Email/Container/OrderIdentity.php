@@ -12,6 +12,7 @@ use Magento\App\Config\ScopeConfigInterface;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\App\Config\ScopeConfigInterface as FrameworkScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use SmartOSC\GroupOrder\Helper\Data;
 
 class OrderIdentity extends \Magento\Sales\Model\Order\Email\Container\OrderIdentity
 {
@@ -19,11 +20,13 @@ class OrderIdentity extends \Magento\Sales\Model\Order\Email\Container\OrderIden
      * @param FrameworkScopeConfigInterface $scopeConfig
      * @param StoreManagerInterface $storeManager
      * @param CheckoutSession $checkoutSession
+     * @param Data $helper
      */
     public function __construct(
         FrameworkScopeConfigInterface $scopeConfig,
         StoreManagerInterface $storeManager,
-        private CheckoutSession $checkoutSession
+        private CheckoutSession $checkoutSession,
+        private Data $helper
     ) {
         parent::__construct($scopeConfig, $storeManager);
     }
@@ -35,6 +38,10 @@ class OrderIdentity extends \Magento\Sales\Model\Order\Email\Container\OrderIden
      */
     public function getEmailCopyTo()
     {
+        if (!$this->helper->isEnabled()) {
+            return parent::getEmailCopyTo();
+        }
+
         $emailCC = $this->checkoutSession->getEmailCc();
         $configData = $this->getConfigValue(self::XML_PATH_EMAIL_COPY_TO, $this->getStore()->getStoreId());
 

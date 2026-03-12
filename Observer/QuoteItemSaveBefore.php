@@ -11,14 +11,17 @@ namespace SmartOSC\GroupOrder\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use SmartOSC\GroupOrder\Helper\Data;
 
 class QuoteItemSaveBefore implements ObserverInterface
 {
     /**
      * @param CustomerSession $customerSession
+     * @param Data $helper
      */
     public function __construct(
-        private CustomerSession $customerSession
+        private CustomerSession $customerSession,
+        private Data $helper
     ) {
     }
 
@@ -30,6 +33,10 @@ class QuoteItemSaveBefore implements ObserverInterface
      */
     public function execute(Observer $observer): void
     {
+        if (!$this->helper->isEnabled()) {
+            return;
+        }
+
         $quoteItem = $observer->getEvent()->getItem();
 
         // Avoid overwriting ownership of items already in the group cart.

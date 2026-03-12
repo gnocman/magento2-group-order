@@ -130,7 +130,7 @@ $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinima
             <?php endif; ?>
         </td>
 
-        <?php if ($viewModel && $viewModel->isLoggedIn()): ?>
+        <?php if ($viewModel && $viewModel->isEnabled()): ?>
             <td class="col customer-name" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
                 <?= $block->escapeHtml($viewModel->getCustomerInfo((int) $_item->getData('customer_id'))) ?>
             </td>

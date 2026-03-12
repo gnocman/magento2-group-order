@@ -13,6 +13,7 @@ use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerC
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Api\CartItemRepositoryInterface;
+use SmartOSC\GroupOrder\Helper\Data;
 use SmartOSC\GroupOrder\Logger\Logger as GroupOrderLogger;
 
 class EmailCC implements ObserverInterface
@@ -22,12 +23,14 @@ class EmailCC implements ObserverInterface
      * @param CartItemRepositoryInterface $cartItemRepository
      * @param CustomerCollectionFactory $customerCollectionFactory
      * @param GroupOrderLogger $logger
+     * @param Data $helper
      */
     public function __construct(
         private CheckoutSession $checkoutSession,
         private CartItemRepositoryInterface $cartItemRepository,
         private CustomerCollectionFactory $customerCollectionFactory,
-        private GroupOrderLogger $logger
+        private GroupOrderLogger $logger,
+        private Data $helper
     ) {
     }
 
@@ -41,6 +44,10 @@ class EmailCC implements ObserverInterface
      */
     public function execute(Observer $observer): void
     {
+        if (!$this->helper->isEnabled()) {
+            return;
+        }
+
         $order = $observer->getEvent()->getOrder();
         $quoteId = (int)$order->getQuoteId();
 

@@ -46,11 +46,11 @@ $viewModel = $block->getData('cart_item_customer_view_model');
         <?= $block->escapeHtml($_item->getDescription()) ?>
     </td>
 
-    <td class="col name-customer" style="text-align: left" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
-        <?php if ($viewModel): ?>
+    <?php if ($viewModel && $viewModel->isEnabled()): ?>
+        <td class="col name-customer" style="text-align: left" data-th="<?= $block->escapeHtml(__('Name Customer')) ?>">
             <?= $block->escapeHtml($viewModel->getCustomerInfo((int) $_item->getData('customer_id'))) ?>
-        <?php endif; ?>
-    </td>
+        </td>
+    <?php endif; ?>
     <td class="col sku" data-th="<?= $block->escapeHtml(__('SKU')) ?>">
         <?= /* @noEscape */ $block->prepareSku($block->getSku()) ?>
     </td>

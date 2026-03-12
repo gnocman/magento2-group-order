@@ -37,11 +37,11 @@ $viewModel = $block->getData('cart_item_customer_view_model');
         <?= $escaper->escapeHtml($_item->getDescription()) ?>
     </td>
 
-    <td class="item-name-customer">
-        <?php if ($viewModel): ?>
+    <?php if ($viewModel && $viewModel->isEnabled()): ?>
+        <td class="item-name-customer">
             <?= $escaper->escapeHtml($viewModel->getCustomerInfo((int) $_item->getData('customer_id'))) ?>
-        <?php endif; ?>
-    </td>
+        </td>
+    <?php endif; ?>
 
     <td class="item-qty"><?= (float) $_item->getQtyOrdered() ?></td>
     <td class="item-price">

@@ -10,6 +10,8 @@ namespace SmartOSC\GroupOrder\Plugin\Cart;
 
 use Magento\Checkout\Block\Cart\AbstractCart;
 use Magento\Framework\App\Request\Http;
+use SmartOSC\GroupOrder\Helper\Data;
+use SmartOSC\GroupOrder\ViewModel\CartItemCustomer;
 
 class SetTemplate
 {
@@ -18,13 +20,18 @@ class SetTemplate
 
     /**
      * @param Http $request
+     * @param Data $helper
+     * @param CartItemCustomer $viewModel
      */
-    public function __construct(private Http $request)
-    {
+    public function __construct(
+        private Http $request,
+        private Data $helper,
+        private CartItemCustomer $viewModel
+    ) {
     }
 
     /**
-     * Override cart item renderer template on group order cart page
+     * Override cart item renderer template and inject ViewModel
      *
      * @param AbstractCart $subject
      * @param mixed $result
@@ -32,8 +39,9 @@ class SetTemplate
      */
     public function afterGetItemRenderer(AbstractCart $subject, $result)
     {
-        if (str_contains($this->request->getPathInfo(), self::GROUP_ORDER_CART_PATH)) {
+        if (str_contains($this->request->getPathInfo(), self::GROUP_ORDER_CART_PATH) & $this->helper->isEnabled()) {
             $result->setTemplate(self::CART_ITEM_TEMPLATE);
+            $result->setData('cart_item_customer_view_model', $this->viewModel);
         }
 
         return $result;

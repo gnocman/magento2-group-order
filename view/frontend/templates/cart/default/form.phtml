@@ -10,6 +10,8 @@
  * @var $block \Magento\Checkout\Block\Cart\Grid
  */
 
+$viewModel = $block->getData('cart_item_customer_view_model');
+$isEnabled = $viewModel && $viewModel->isEnabled();
 $mergedCells = ($this->helper(Magento\Tax\Helper\Data::class)->displayCartBothPrices() ? 2 : 1);
 ?>
 <?= $block->getChildHtml('form_before') ?>
@@ -39,7 +41,9 @@ $mergedCells = ($this->helper(Magento\Tax\Helper\Data::class)->displayCartBothPr
                 <th class="col price" scope="col"><span><?= $block->escapeHtml(__('Price')) ?></span></th>
                 <th class="col qty" scope="col"><span><?= $block->escapeHtml(__('Qty')) ?></span></th>
                 <th class="col subtotal" scope="col"><span><?= $block->escapeHtml(__('Subtotal')) ?></span></th>
-                <th class="col customer-name" scope="col"><span><?= $block->escapeHtml(__('Name Customer')) ?></span></th>
+                <?php if ($isEnabled): ?>
+                    <th class="col customer-name" scope="col"><span><?= $block->escapeHtml(__('Name Customer')) ?></span></th>
+                <?php endif; ?>
             </tr>
             </thead>
             <?php foreach ($block->getItems() as $_item): ?>

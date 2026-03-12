@@ -17,9 +17,13 @@
             <th class="item-info">
                 <?= $block->escapeHtml(__('Items')) ?>
             </th>
-            <th class="item-name-customer">
-                <?= $block->escapeHtml(__('Name Customer')) ?>
-            </th>
+            <?php
+            $viewModel = $block->getData('cart_item_customer_view_model');
+            if ($viewModel && $viewModel->isEnabled()): ?>
+                <th class="item-name-customer">
+                    <?= $block->escapeHtml(__('Name Customer')) ?>
+                </th>
+            <?php endif; ?>
             <th class="item-qty">
                 <?= $block->escapeHtml(__('Qty')) ?>
             </th>

@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
 use Magento\Framework\Registry;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
+use SmartOSC\GroupOrder\Helper\Data;
 
 class DuplicateRowQuoteItem
 {
@@ -19,9 +20,11 @@ class DuplicateRowQuoteItem
 
     /**
      * @param Registry $registry
+     * @param Data $helper
      */
     public function __construct(
-        private Registry $registry
+        private Registry $registry,
+        private Data $helper
     ) {
     }
 
@@ -38,6 +41,10 @@ class DuplicateRowQuoteItem
      */
     public function afterGetItemByProduct(Quote $subject, $result, $product)
     {
+        if (!$this->helper->isEnabled()) {
+            return $result;
+        }
+
         $customerId = $this->registry->registry(self::REGISTRY_KEY);
 
         if (!$customerId) {

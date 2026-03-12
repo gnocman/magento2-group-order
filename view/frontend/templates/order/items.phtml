@@ -12,16 +12,22 @@
     <table class="data table table-order-items" id="my-orders-table" summary="<?= $block->escapeHtml(__('Items Ordered')) ?>">
         <caption class="table-caption"><?= $block->escapeHtml(__('Items Ordered')) ?></caption>
         <thead>
+            <?php
+            $viewModel = $block->getData('cart_item_customer_view_model');
+            $isEnabled = $viewModel && $viewModel->isEnabled();
+            ?>
             <?php if ($block->isPagerDisplayed()) : ?>
                 <tr>
-                    <td colspan="5" data-block="order-items-pager-top" class="order-pager-wrapper order-pager-wrapper-top">
+                    <td colspan="<?= $isEnabled ? 6 : 5 ?>" data-block="order-items-pager-top" class="order-pager-wrapper order-pager-wrapper-top">
                         <?= $block->getPagerHtml() ?>
                     </td>
                 </tr>
             <?php endif ?>
             <tr>
                 <th class="col name"><?= $block->escapeHtml(__('Product Name')) ?></th>
-                <th class="col name-customer"><?= $block->escapeHtml(__('Name Customer')) ?></th>
+                <?php if ($isEnabled): ?>
+                    <th class="col name-customer"><?= $block->escapeHtml(__('Name Customer')) ?></th>
+                <?php endif; ?>
                 <th class="col sku"><?= $block->escapeHtml(__('SKU')) ?></th>
                 <th class="col price"><?= $block->escapeHtml(__('Price')) ?></th>
                 <th class="col qty"><?= $block->escapeHtml(__('Qty')) ?></th>
@@ -71,7 +77,7 @@
         <tfoot>
             <?php if ($block->isPagerDisplayed()) : ?>
                 <tr>
-                    <td colspan="5" data-block="order-items-pager-bottom" class="order-pager-wrapper order-pager-wrapper-bottom">
+                    <td colspan="<?= $isEnabled ? 6 : 5 ?>" data-block="order-items-pager-bottom" class="order-pager-wrapper order-pager-wrapper-bottom">
                         <?= $block->getPagerHtml() ?>
                     </td>
                 </tr>

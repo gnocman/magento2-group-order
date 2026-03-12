@@ -13,17 +13,31 @@ use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
+use SmartOSC\GroupOrder\Helper\Data;
 
 class CartItemCustomer implements ArgumentInterface
 {
     /**
      * @param CustomerRepositoryInterface $customerRepository
      * @param CustomerSession $customerSession
+     * @param Data $helper
      */
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
-        private CustomerSession $customerSession
+        private CustomerSession $customerSession,
+        private Data $helper
     ) {
+    }
+
+    /**
+     * Check if module is enabled
+     *
+     * @param int|null $storeId
+     * @return bool
+     */
+    public function isEnabled(?int $storeId = null): bool
+    {
+        return $this->helper->isEnabled($storeId);
     }
 
     /**
@@ -33,6 +47,10 @@ class CartItemCustomer implements ArgumentInterface
      */
     public function isLoggedIn(): bool
     {
+        if (!$this->isEnabled()) {
+            return false;
+        }
+
         return $this->customerSession->isLoggedIn();
     }
 
@@ -43,6 +61,10 @@ class CartItemCustomer implements ArgumentInterface
      */
     public function getCurrentCustomerId(): int
     {
+        if (!$this->isEnabled()) {
+            return 0;
+        }
+
         return (int)$this->customerSession->getCustomerId();
     }
 
@@ -54,7 +76,7 @@ class CartItemCustomer implements ArgumentInterface
      */
     public function getCustomerEmail(int $customerId): string
     {
-        if (!$customerId) {
+        if (!$this->isEnabled() || !$customerId) {
             return '';
         }
 
@@ -75,8 +97,12 @@ class CartItemCustomer implements ArgumentInterface
      */
     public function getCustomerInfo(int $customerId, bool $checkCurrent = true): string
     {
-        if (!$customerId) {
+        if (!$this->isEnabled()) {
             return '';
+        }
+
+        if (!$customerId) {
+            return (string)__('Guest');
         }
 
         try {

@@ -30,12 +30,12 @@ $mergedCells = ($this->helper(Magento\Tax\Helper\Data::class)->displayCartBothPr
 
         <?php
         $quote = $block->loadQuoteByToken();
-        if ($quote->getId()): ?>
+        if ($viewModel && $viewModel->isEnabled() && $quote->getId()): ?>
             <h2 class="customer-name" style="color: #da0f0f">
                 <?= $block->escapeHtml($quote->getCustomerFirstname() . ' ' . $quote->getCustomerLastname()) ?>
                 <?= $block->escapeHtml(__(', owner of this Group Order.')) ?>
             </h2>
-        <?php else: ?>
+        <?php elseif (!$quote->getId()): ?>
             <h2 class="error-message"><?= $block->escapeHtml(__('You have no items in your shopping cart.')) ?></h2>
         <?php endif; ?>
 
@@ -50,7 +50,9 @@ $mergedCells = ($this->helper(Magento\Tax\Helper\Data::class)->displayCartBothPr
                 <th class="col price" scope="col"><span><?= $block->escapeHtml(__('Price')) ?></span></th>
                 <th class="col qty" scope="col"><span><?= $block->escapeHtml(__('Qty')) ?></span></th>
                 <th class="col subtotal" scope="col"><span><?= $block->escapeHtml(__('Subtotal')) ?></span></th>
-                <th class="col customer-name" scope="col"><span><?= $block->escapeHtml(__('Name Customer')) ?></span></th>
+                <?php if ($viewModel && $viewModel->isEnabled()): ?>
+                    <th class="col customer-name" scope="col"><span><?= $block->escapeHtml(__('Name Customer')) ?></span></th>
+                <?php endif; ?>
             </tr>
             </thead>
             <?php foreach ($quote->getAllItems() as $item): ?>

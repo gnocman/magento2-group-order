@@ -15,6 +15,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Quote\Model\QuoteFactory;
+use SmartOSC\GroupOrder\Helper\Data;
 
 class ValidateProductBeforeAddToCart implements ObserverInterface
 {
@@ -23,12 +24,14 @@ class ValidateProductBeforeAddToCart implements ObserverInterface
      * @param ManagerInterface $messageManager
      * @param QuoteFactory $quoteFactory
      * @param Cart $cart
+     * @param Data $helper
      */
     public function __construct(
         private CustomerSession $customerSession,
         private ManagerInterface $messageManager,
         private QuoteFactory $quoteFactory,
-        private Cart $cart
+        private Cart $cart,
+        private Data $helper
     ) {
     }
 
@@ -41,6 +44,10 @@ class ValidateProductBeforeAddToCart implements ObserverInterface
      */
     public function execute(Observer $observer): void
     {
+        if (!$this->helper->isEnabled()) {
+            return;
+        }
+
         $token = (string)$observer->getEvent()->getRequest()->getParam('key');
 
         if (!$token) {

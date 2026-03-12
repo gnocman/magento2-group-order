@@ -24,6 +24,7 @@ use Magento\Framework\Locale\ResolverInterface as LocaleResolver;
 use Magento\Framework\Registry;
 use Magento\Quote\Model\QuoteRepository\SaveHandler;
 use Magento\Store\Model\StoreManagerInterface;
+use SmartOSC\GroupOrder\Helper\Data;
 use SmartOSC\GroupOrder\Logger\Logger as GroupOrderLogger;
 
 /**
@@ -46,9 +47,9 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
      * @param CustomerSession $customerSession
      * @param RequestQuantityProcessor $quantityProcessor
      * @param Escaper $escaper
-     * @param LoggerInterface $logger
+     * @param GroupOrderLogger $logger
      * @param LocaleResolver $localeResolver
-     *
+     * @param Data $helper
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -65,7 +66,8 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
         private RequestQuantityProcessor $quantityProcessor,
         private Escaper $escaper,
         private GroupOrderLogger $logger,
-        private LocaleResolver $localeResolver
+        private LocaleResolver $localeResolver,
+        private Data $helper
     ) {
         parent::__construct(
             $context,
@@ -86,6 +88,10 @@ class Add extends \Magento\Checkout\Controller\Cart\Add
      */
     public function execute()
     {
+        if (!$this->helper->isEnabled()) {
+            return parent::execute();
+        }
+
         if (!$this->_formKeyValidator->validate($this->getRequest())) {
             $this->messageManager->addErrorMessage(__('Your session has expired'));
             return $this->resultRedirectFactory->create()->setPath('*/*/');

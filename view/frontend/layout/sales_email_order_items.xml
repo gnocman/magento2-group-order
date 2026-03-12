@@ -7,6 +7,9 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" label="Email Order Items List" design_abstraction="custom">
     <referenceBlock name="items">
+        <arguments>
+            <argument name="cart_item_customer_view_model" xsi:type="object">SmartOSC\GroupOrder\ViewModel\CartItemCustomer</argument>
+        </arguments>
         <action method="setTemplate">
             <argument name="template" xsi:type="string">SmartOSC_GroupOrder::email/items.phtml</argument>
         </action>

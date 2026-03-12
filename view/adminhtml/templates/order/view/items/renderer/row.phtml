@@ -1,0 +1,29 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /** @var \Magento\Sales\Block\Adminhtml\Order\View\Items\Renderer\DefaultRenderer $block */ ?>
+<?php $_item = $block->getItem() ?>
+<?php $block->setPriceDataObject($_item) ?>
+<tr>
+    <?php
+    $i = 0;
+    $columns = $block->getColumns();
+    $viewModel = $block->getData('cart_item_customer_view_model');
+    $storeId = (int)$_item->getOrder()->getStoreId();
+
+    // GroupOrder: Hide column if module is disabled
+    if (!$viewModel || !$viewModel->isEnabled($storeId)) {
+        unset($columns['name_customer_add_to_cart']);
+    }
+
+    $lastItemNumber = count($columns) ?>
+    <?php foreach ($columns as $columnName => $columnClass) : ?>
+        <?php $i++; ?>
+        <td class="<?= /* @noEscape */ $columnClass ?><?= /* @noEscape */ ($i === $lastItemNumber ? ' last' : '') ?>">
+            <?= $block->getColumnHtml($_item, $columnName) ?>
+        </td>
+    <?php endforeach; ?>
+</tr>

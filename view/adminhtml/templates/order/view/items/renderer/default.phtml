@@ -14,7 +14,8 @@ $viewModel = $block->getData('cart_item_customer_view_model');
 $customer_id = $_item->getData('customer_id');
 
 $name = '';
-if ($viewModel && $customer_id) {
+$storeId = (int)$_item->getOrder()->getStoreId();
+if ($viewModel && $viewModel->isEnabled($storeId) && $customer_id) {
     $name = $viewModel->getCustomerInfo((int)$customer_id, false);
 }
 ?>

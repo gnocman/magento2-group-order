@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <referenceBlock name="order_items">
+        <referenceBlock name="order_items" template="SmartOSC_GroupOrder::order/view/items.phtml">
             <arguments>
+                <argument name="cart_item_customer_view_model" xsi:type="object">SmartOSC\GroupOrder\ViewModel\CartItemCustomer</argument>
                 <argument name="columns" xsi:type="array">
                     <item name="name_customer_add_to_cart" xsi:type="string" translate="true">Name Customer</item>
                 </argument>
@@ -14,8 +15,9 @@
                 </arguments>
             </block>
         </referenceBlock>
-        <referenceBlock name="default_order_items_renderer">
+        <referenceBlock name="default_order_items_renderer" template="SmartOSC_GroupOrder::order/view/items/renderer/row.phtml">
             <arguments>
+                <argument name="cart_item_customer_view_model" xsi:type="object">SmartOSC\GroupOrder\ViewModel\CartItemCustomer</argument>
                 <argument name="columns" xsi:type="array">
                     <item name="name_customer_add_to_cart" xsi:type="string" translate="false">col-name_customer_add_to_cart</item>
                 </argument>

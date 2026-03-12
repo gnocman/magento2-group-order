@@ -15,4 +15,7 @@
     <type name="Magento\Quote\Model\Quote">
         <plugin name="custom_quote_plugin" type="SmartOSC\GroupOrder\Plugin\QuoteItem\DuplicateRowQuoteItem" sortOrder="10" disabled="false"/>
     </type>
+    <type name="Magento\Sales\Block\Order\Item\Renderer\DefaultRenderer">
+        <plugin name="order_item_override" type="SmartOSC\GroupOrder\Plugin\Order\SetTemplate" sortOrder="1"/>
+    </type>
 </config>
