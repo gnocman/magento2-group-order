@@ -9,7 +9,7 @@
 /**
  * Product list toolbar
  *
- * @var $block \SmartOSC\GroupOrder\Block\QuoteUrl
+ * @var $block \Magento\Catalog\Block\Product\ProductList\Toolbar
  */
 
 $helper = $this->helper(\SmartOSC\GroupOrder\Helper\Data::class);
@@ -18,8 +18,6 @@ $enable = $helper->isEnabled();
 <?php if ($block->getCollection()->getSize()) : ?>
     <?php
     $widgetOptionsJson = $block->getWidgetOptionsJson();
-    // Use json_decode directly or inject Serializer into Block if needed.
-    // Here we just pass it to data-mage-init.
     ?>
     <div class="toolbar toolbar-products" data-mage-init='{"productListToolbarForm": <?= /* @noEscape */
     $widgetOptionsJson ?>}'>
@@ -35,7 +33,7 @@ $enable = $helper->isEnabled();
                 <?= $block->fetchView($block->getTemplateFile('Magento_Catalog::product/list/toolbar/sorter.phtml')) ?>
             <?php endif ?>
             <?php if ($enable) : ?>
-                <?= $block->fetchView($block->getTemplateFile('SmartOSC_GroupOrder::toolbar/button.phtml')) ?>
+                <?= $block->getChildHtml('grouporder_button') ?>
             <?php endif ?>
         <?php endif ?>
     </div>
